@@ -1,12 +1,25 @@
 import mysql from "mysql2/promise"
 
+const requiredEnvVars = ["MYSQL_HOST", "MYSQL_USER", "MYSQL_PASSWORD", "MYSQL_DATABASE"] as const
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`)
+  }
+}
+
+const port = Number.parseInt(process.env.MYSQL_PORT || "3306", 10)
+if (Number.isNaN(port)) {
+  throw new Error("MYSQL_PORT must be a valid number")
+}
+
 // Database connection pool
 const pool = mysql.createPool({
-  host: '942u-s.h.filess.io',//process.env.MYSQL_HOST,
-  user: 'quitSmoking_beganhello',//process.env.MYSQL_USER,
-  password: 'ab688aae3cab2a570f6ee926a6573e3d5956f948',//process.env.MYSQL_PASSWORD,
-  database: 'quitSmoking_beganhello',//process.env.MYSQL_DATABASE,
-  port: '3307',//Number.parseInt(process.env.MYSQL_PORT || "3307", 10),
+  host: process.env.MYSQL_HOST!,
+  user: process.env.MYSQL_USER!,
+  password: process.env.MYSQL_PASSWORD!,
+  database: process.env.MYSQL_DATABASE!,
+  port,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
